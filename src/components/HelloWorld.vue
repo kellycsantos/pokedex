@@ -1,15 +1,24 @@
 <template>
 	<div class="container">
-		<h1>Isso será uma pokedex</h1>
-    <div class="pokemon-group">
-      <div class="pokemon-group__card" v-for="pokemon,index in pokemons" :key="index">
+    <!-- <h1 v-if="carregando">Estou carregando ainda</h1> -->
+		<h1  v-if="!carregando">Carreguei</h1> 
+      <LoadingPage v-if="carregando"/>
+
+    <div class="pokemon-group"  v-else>
+      <v-card class="pokemon-group__card" v-for="pokemon,index in pokemons" :key="index" @click="getPokemon(pokemon.name)">
         <h3>{{pokemon.name}}</h3>
-        <h4>{{getImgId(pokemon)}}</h4>
+        <h4>#{{getImgId(pokemon)}}</h4>
         <img :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getImgId(pokemon)}.png`"
         :alt="pokemon.name">
-      </div>
+
+        <v-dialog v-model="drawer" hide-overlay  >
+          <div class="drawer">
+            {{ativo}}
+          </div>
+        </v-dialog>
 
 
+      </v-card>
     </div>
 	</div>
 </template>
@@ -17,21 +26,39 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from 'axios';
+
+import LoadingPage from '../components/LoadingPage.vue'
 export default defineComponent({
 	name: "HelloWorld",
 	props: {
 		msg: String,
 	},
+  components:{
+    LoadingPage
+  },
   data(){
     return{
       pokemons: [],
-      pokemonImage: this.pokemon
+      pokemonImage: this.pokemon,
+      drawer: false,
+      ativo: '',
+      drawer2: true,
+      carregando: true,
+
     }
   },
   methods:{
     getImgId(pokemonId: { url: string; }){
       return pokemonId.url.split('/')[6];
+    },
+    getPokemon(pokemon: string){
+      this.ativo = pokemon
+      this.drawer = true
+      console.log(pokemon)
     }
+  },
+  created(){
+    console.log('carregando')
   },
   mounted(){
     axios
@@ -39,6 +66,7 @@ export default defineComponent({
       .then((response) => {
         this.pokemons = response.data.results
         console.log(response)
+        this.carregando = false
       })
   }
 })
@@ -82,11 +110,19 @@ a {
   height: 290px;
   width: 220px;
   margin: 5px;
+  text-transform: capitalize;
 
 
 }
 
 .pokemon-group__card img{
   width: 80px;
+}
+
+.drawer{
+  width: 75vw;
+  height: 70vh;
+  background: rgb(0, 255, 13);
+  
 }
 </style>
