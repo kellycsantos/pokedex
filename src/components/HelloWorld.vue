@@ -11,9 +11,42 @@
         <img :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getImgId(pokemon)}.png`"
         :alt="pokemon.name">
 
-        <v-dialog v-model="drawer" hide-overlay  >
-          <div class="drawer">
-            {{ativo}}
+        <v-dialog v-model="drawer"  >
+          <div class="details">
+            <v-col>
+              <v-row class="altura">
+                <v-col cols="4">
+                  <v-card class="details__card details__card__bio">
+                    <v-col>
+                      <img :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonsDetailsId}.png`">
+                    </v-col>
+                    <v-divider></v-divider>
+                    <v-row>
+                      <v-col>#{{pokemonsDetailsId}}</v-col>
+                      <v-col>{{pokemonDetailsType}}</v-col>
+                    </v-row>
+                    
+
+                  </v-card>
+                </v-col>
+                <v-col>
+                  <v-card class="details__card">
+                  <v-row>
+                    <v-col>Peso</v-col>
+                    <v-col>{{pokemonDetailsWeight}}</v-col>
+                  </v-row>
+                  <v-divider></v-divider>
+                  <v-row>
+                    <v-col>Altura</v-col>
+                    <v-col>{{pokemonDetailsHeight}}</v-col>
+                  </v-row>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col>
+               <v-card class="details__card">evoluções</v-card>
+            </v-col>
           </div>
         </v-dialog>
 
@@ -40,10 +73,17 @@ export default defineComponent({
     return{
       pokemons: [],
       pokemonImage: this.pokemon,
-      drawer: false,
+      drawer: true,
       ativo: '',
       drawer2: true,
       carregando: true,
+      pokemonsDetails: [],
+      pokemonDetailsImg: '',
+      pokemonDetailsType: '',
+      pokemonDetailsWeight:'',
+      pokemonDetailsHeight:'',
+      pokemonsDetailsId: '',
+
 
     }
   },
@@ -54,7 +94,29 @@ export default defineComponent({
     getPokemon(pokemon: string){
       this.ativo = pokemon
       this.drawer = true
-      console.log(pokemon)
+      axios
+      .get(`https://pokeapi.co/api/v2/pokemon/${this.ativo}`)
+      .then((response) => {
+        this.pokemonsDetails = response.data
+        this.pokemonsDetailsId = response.data.id
+        this.pokemonDetailsImg = response.data.sprites.front_default
+        this.pokemonDetailsType = response.data.types[0].type.name
+        this.pokemonDetailsWeight = response.data.weight
+        this.pokemonDetailsHeight = response.data.height
+        console.log('Nome:',pokemon)
+        console.log('Id:', this.pokemonsDetailsId)
+        console.log('Tipo:',this.pokemonDetailsType)
+        console.log('Peso:',this.pokemonDetailsWeight)
+        console.log('Altura:',this.pokemonDetailsHeight)
+        console.log('Imagem:',this.pokemonDetailsImg)
+        console.log('Detalhes completo:',this.pokemonsDetails)
+      })
+      // axios
+      // .get(`https://pokeapi.co/api/v2/pokemon-species/${this.ativo}`)
+      // .then((response) =>{
+      //   console.log(response)
+      //   console.log(response.data)
+      // })
     }
   },
   created(){
@@ -62,7 +124,7 @@ export default defineComponent({
   },
   mounted(){
     axios
-      .get('https://pokeapi.co/api/v2/pokemon?limit=151')
+      .get('https://pokeapi.co/api/v2/pokemon?limit=15')
       .then((response) => {
         this.pokemons = response.data.results
         console.log(response)
@@ -96,7 +158,7 @@ a {
 }
 
 .pokemon-group{
-  border: 1px solid rgb(158, 143, 143);
+  border: 1px solid rgba(189, 182, 182, 0.397);
   padding: 5px;
   display: flex;
   flex-wrap: wrap;
@@ -105,6 +167,9 @@ a {
 }
 
 .pokemon-group__card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   border: 1px solid rgb(0, 26, 255);
   border-radius: 5px;
   height: 290px;
@@ -116,13 +181,28 @@ a {
 }
 
 .pokemon-group__card img{
-  width: 80px;
+  width: 75%;
 }
 
-.drawer{
+.details{
   width: 75vw;
   height: 70vh;
-  background: rgb(0, 255, 13);
-  
+  background: rgb(149, 182, 151);
+  border-radius: 10px;
+}
+.altura{
+  height: 50vh;
+}
+
+.details__card__bio{
+  height: 45vh;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.details__card__bio img{
+  width: 100%;
+  height: 100%;
 }
 </style>
