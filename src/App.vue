@@ -4,6 +4,7 @@
       <!-- <router-link to='/'>Home</router-link>
       <router-link to='/about'>Sobre</router-link> -->
       <router-view/>
+
     </v-main>
   </v-app>
 </template>
