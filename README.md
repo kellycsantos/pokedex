@@ -1,6 +1,10 @@
-# pokedex
+# Pokedex Card
 
-## Project setup
+<img src="template.jpeg" alt="pokemon card template">
+
+> Projeto feito para apresentar no chapter front-end para estudos de Vue.js 3 e Vuetify. 
+
+## 🚀 Instalando pokedex
 ```
 npm install
 ```
